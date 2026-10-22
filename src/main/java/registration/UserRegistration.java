@@ -36,6 +36,9 @@ public class UserRegistration {
         if (!validatePassword(password)) {
             throw new RegistrationException("Пароль слишком короткий");
         }
+        if (confirmPassword == null || confirmPassword.isBlank()) {
+            throw new RegistrationException("Подтверждение пароля обязательно для заполнения");
+        }
         if (!isConfirmPassword(password, confirmPassword)) {
             throw new RegistrationException("Пароли не совпадают");
         }
