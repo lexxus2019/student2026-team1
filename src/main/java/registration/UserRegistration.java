@@ -1,22 +1,34 @@
 package registration;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class UserRegistration {
 
-    // Базовая реализация: email валиден, если содержит "@" и "."
-     public boolean validateEmail(String email) {
-        if (email == null || email.isBlank()) {
+    private static final String EMAIL_PATTERN = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+    private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+
+    // Email валиден, если подходит под маску
+    public boolean validateEmail(String email) {
+        if (email == null) {
             return false;
         }
-        return email.contains("@") && email.contains(".");
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
-    // Базовая реализация: пароль не короче 6 символов
-     public boolean validatePassword(String password) {
-        return password != null && password.length() >= 6;
+
+    // Базовая реализация: пароль не короче 6 символов и имеет хотя бы одну заглавную букву
+    public boolean validatePassword(String password) {
+        return password != null && password.length() >= 6 && password.matches(".*[A-ZА-ЯЁ].*");
+    }
+
+    public boolean isConfirmPassword(String password, String confirmPassword) {
+        return password != null && password.equals(confirmPassword);
     }
 
     // Базовая реализация: проверка совпадения паролей
-     public void register(String email, String password, String confirmPassword, String username)
+    public void register(String email, String password, String confirmPassword, String username)
             throws RegistrationException {
         if (!validateEmail(email)) {
             throw new RegistrationException("Некорректный email");
@@ -27,8 +39,12 @@ public class UserRegistration {
         if (confirmPassword == null || confirmPassword.isBlank()) {
             throw new RegistrationException("Подтверждение пароля обязательно для заполнения");
         }
-        if (!password.equals(confirmPassword)) {
+        if (!isConfirmPassword(password, confirmPassword)) {
             throw new RegistrationException("Пароли не совпадают");
         }
+    }
+
+    public boolean validateLatinUsername(String username) {
+        return Pattern.compile("[A-Za-z]{3,}").matcher(username).matches();
     }
 }
