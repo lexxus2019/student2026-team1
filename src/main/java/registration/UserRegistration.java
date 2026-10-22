@@ -23,6 +23,11 @@ public class UserRegistration {
         return password != null && password.length() >= 6 && password.matches(".*[A-ZА-ЯЁ].*");
     }
 
+    // Проверка: имя пользователя не короче 8 символов
+    public boolean validateUsername(String username) {
+        return username != null && username.length() >= 8;
+    }
+  
     public boolean isConfirmPassword(String password, String confirmPassword) {
         return password != null && password.equals(confirmPassword);
     }
@@ -30,6 +35,9 @@ public class UserRegistration {
     // Базовая реализация: проверка совпадения паролей
     public void register(String email, String password, String confirmPassword, String username)
             throws RegistrationException {
+        if (!validateUsername(username)) {
+            throw new RegistrationException("Имя пользователя слишком короткое");
+        }
         if (!validateEmail(email)) {
             throw new RegistrationException("Некорректный email");
         }
